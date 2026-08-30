@@ -1,0 +1,34 @@
+name: Firefox URL Loader
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-loader:
+    runs-on: windows-latest
+    timeout-minutes: 360  # 6 hours
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install Firefox
+      shell: pwsh
+      run: |
+        $url = "https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US"
+        $installer = "$env:TEMP\FirefoxSetup.exe"
+        Invoke-WebRequest -Uri $url -OutFile $installer
+        Start-Process -FilePath $installer -ArgumentList "/S" -Wait
+        Remove-Item $installer -Force
+    
+    - name: Install Python dependencies
+      run: |
+        pip install psutil
+    
+    - name: Run Firefox Loader
+      run: python firefox_loader.py
