@@ -27,18 +27,18 @@ def auto_install_dependencies():
                 __import__('PIL')
             else:
                 __import__(package)
-            print(f"✅ {package} already installed")
+            print(f"[OK] {package} already installed")
         except ImportError:
-            print(f"📦 Installing {package}...")
+            print(f"[*] Installing {package}...")
             try:
                 subprocess.check_call(
                     [sys.executable, "-m", "pip", "install", package, "--quiet"],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL
                 )
-                print(f"✅ {package} installed successfully")
+                print(f"[OK] {package} installed successfully")
             except Exception as e:
-                print(f"❌ Failed to install {package}: {e}")
+                print(f"[FAIL] Failed to install {package}: {e}")
                 # Try with --user flag
                 try:
                     subprocess.check_call(
@@ -46,13 +46,13 @@ def auto_install_dependencies():
                         stdout=subprocess.DEVNULL,
                         stderr=subprocess.DEVNULL
                     )
-                    print(f"✅ {package} installed successfully (--user)")
+                    print(f"[OK] {package} installed successfully (--user)")
                 except:
-                    print(f"❌ Failed to install {package} even with --user flag")
+                    print(f"[FAIL] Failed to install {package} even with --user flag")
                     sys.exit(1)
     
     print("=" * 60)
-    print("✅ ALL DEPENDENCIES INSTALLED")
+    print("[OK] ALL DEPENDENCIES INSTALLED")
     print("=" * 60)
     print()
 
@@ -96,11 +96,11 @@ def send_telegram_message(message):
         }
         response = requests.post(url, json=data, timeout=10)
         if response.status_code == 200:
-            log("✅ Telegram message sent")
+            log("Telegram message sent")
         else:
-            log(f"❌ Telegram message failed: {response.status_code}")
+            log(f"Telegram message failed: {response.status_code}")
     except Exception as e:
-        log(f"❌ Telegram error: {e}")
+        log(f"Telegram error: {e}")
 
 def send_telegram_photo(image_path, caption):
     """Send photo to Telegram"""
@@ -115,27 +115,27 @@ def send_telegram_photo(image_path, caption):
             }
             response = requests.post(url, files=files, data=data, timeout=30)
             if response.status_code == 200:
-                log("✅ Telegram photo sent")
+                log("Telegram photo sent")
             else:
-                log(f"❌ Telegram photo failed: {response.status_code}")
+                log(f"Telegram photo failed: {response.status_code}")
     except Exception as e:
-        log(f"❌ Telegram photo error: {e}")
+        log(f"Telegram photo error: {e}")
     finally:
         # Clean up screenshot
         if os.path.exists(image_path):
             os.remove(image_path)
-            log("🧹 Screenshot cleaned up")
+            log("Screenshot cleaned up")
 
 def take_screenshot(filename="screenshot.png"):
     """Take screenshot of entire screen"""
     try:
-        log(f"📸 Taking screenshot: {filename}")
+        log(f"Taking screenshot: {filename}")
         screenshot = ImageGrab.grab()
         screenshot.save(filename)
-        log(f"✅ Screenshot saved: {filename}")
+        log(f"Screenshot saved: {filename}")
         return filename
     except Exception as e:
-        log(f"❌ Screenshot failed: {e}")
+        log(f"Screenshot failed: {e}")
         return None
 
 def open_windows():
@@ -152,9 +152,9 @@ def open_windows():
             )
             time.sleep(3)  # Gap between windows
         except Exception as e:
-            log(f"  ❌ Failed to open window {i}: {e}")
+            log(f"  FAILED to open window {i}: {e}")
     
-    log("✅ All windows opened!")
+    log("All windows opened!")
 
 def close_all_firefox():
     """Close all Firefox windows"""
@@ -171,9 +171,9 @@ def close_all_firefox():
                 pass
         
         time.sleep(2)  # Wait for processes to close
-        log(f"✅ Closed {closed} Firefox process(es)")
+        log(f"Closed {closed} Firefox process(es)")
     except Exception as e:
-        log(f"❌ Error closing Firefox: {e}")
+        log(f"Error closing Firefox: {e}")
 
 def check_firefox():
     """Check if Firefox is installed"""
@@ -209,7 +209,7 @@ def wait_with_countdown(seconds, message):
     log(message)
     for i in range(seconds, 0, -1):
         if i % 10 == 0 or i <= 5:
-            print(f"  ⏳ {i} seconds remaining...")
+            print(f"  {i} seconds remaining...")
         time.sleep(1)
 
 # ==================== MAIN LOOP ====================
@@ -220,26 +220,26 @@ def main():
     
     # Check Firefox installation
     if not check_firefox():
-        log("❌ Firefox not found! Please install Firefox.")
-        send_telegram_message("❌ <b>ERROR</b>\nFirefox not found!")
+        log("Firefox not found! Please install Firefox.")
+        send_telegram_message("<b>ERROR</b>\nFirefox not found!")
         sys.exit(1)
     
-    log(f"✅ Firefox found at: {FIREFOX_PATH}")
-    log(f"📋 URLs to load: {len(URLS)}")
+    log(f"Firefox found at: {FIREFOX_PATH}")
+    log(f"URLs to load: {len(URLS)}")
     for i, url in enumerate(URLS, 1):
         log(f"   URL {i}: {url}")
-    log(f"🔄 Refresh interval: {REFRESH_INTERVAL // 60} minutes")
-    log(f"💻 System: {get_system_info()}")
+    log(f"Refresh interval: {REFRESH_INTERVAL // 60} minutes")
+    log(f"System: {get_system_info()}")
     log("=" * 60)
     
     # Send startup message
-    startup_msg = f"""🚀 <b>FIREFOX URL LOADER STARTED</b>
+    startup_msg = f"""<b>FIREFOX URL LOADER STARTED</b>
 
-📋 URLs: {len(URLS)}
-🔄 Refresh: {REFRESH_INTERVAL // 60} minutes
-💻 {get_system_info()}
+URLs: {len(URLS)}
+Refresh: {REFRESH_INTERVAL // 60} minutes
+{get_system_info()}
 
-⏰ Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"""
+Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"""
     send_telegram_message(startup_msg)
     
     cycle_count = 0
@@ -258,56 +258,56 @@ def main():
             # Open new windows
             open_windows()
             
-            log(f"✅ Cycle #{cycle_count} complete!")
+            log(f"Cycle #{cycle_count} complete!")
             
             # ===== CONFIRMATION SCREENSHOTS =====
             # Wait 10 seconds for first screenshot
-            wait_with_countdown(10, "⏰ Waiting 10 seconds for first confirmation...")
+            wait_with_countdown(10, "Waiting 10 seconds for first confirmation...")
             
             # Take first screenshot
             ss1 = take_screenshot("screenshot_10sec.png")
             if ss1:
-                caption1 = f"""📸 <b>CONFIRMATION #1 - 10 SECONDS</b>
+                caption1 = f"""CONFIRMATION #1 - 10 SECONDS
 
-🔄 Cycle: #{cycle_count}
-⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-💻 {get_system_info()}
+Cycle: #{cycle_count}
+Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+{get_system_info()}
 
-✅ Both windows should be visible"""
+Both windows should be visible"""
                 send_telegram_photo(ss1, caption1)
             
             # Wait additional 20 seconds (total 30 seconds)
-            wait_with_countdown(20, "⏰ Waiting 20 more seconds for second confirmation...")
+            wait_with_countdown(20, "Waiting 20 more seconds for second confirmation...")
             
             # Take second screenshot
             ss2 = take_screenshot("screenshot_30sec.png")
             if ss2:
-                caption2 = f"""📸 <b>CONFIRMATION #2 - 30 SECONDS</b>
+                caption2 = f"""CONFIRMATION #2 - 30 SECONDS
 
-🔄 Cycle: #{cycle_count}
-⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-💻 {get_system_info()}
+Cycle: #{cycle_count}
+Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+{get_system_info()}
 
-✅ Windows are active and running"""
+Windows are active and running"""
                 send_telegram_photo(ss2, caption2)
             
-            log(f"✅ Screenshots sent to Telegram!")
+            log("Screenshots sent to Telegram!")
             
-            log(f"⏰ Next refresh in {REFRESH_INTERVAL // 60} minutes...")
+            log(f"Next refresh in {REFRESH_INTERVAL // 60} minutes...")
             log("=" * 60)
             
             # Wait before next cycle
             time.sleep(REFRESH_INTERVAL)
             
     except KeyboardInterrupt:
-        log("\n⚠️ Script stopped by user")
-        send_telegram_message("⚠️ <b>SCRIPT STOPPED</b>\nManually stopped by user")
+        log("\nScript stopped by user")
+        send_telegram_message("<b>SCRIPT STOPPED</b>\nManually stopped by user")
         close_all_firefox()
-        log("🧹 Cleaned up Firefox processes")
+        log("Cleaned up Firefox processes")
         sys.exit(0)
     except Exception as e:
-        log(f"❌ Unexpected error: {e}")
-        send_telegram_message(f"❌ <b>ERROR</b>\n{str(e)}")
+        log(f"Unexpected error: {e}")
+        send_telegram_message(f"<b>ERROR</b>\n{str(e)}")
         close_all_firefox()
         sys.exit(1)
 
