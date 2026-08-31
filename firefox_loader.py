@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Simple Firefox URL Loader - 2 Windows with 5-min Auto Refresh
+Simple Firefox URL Loader - 2 Windows with 30-min Auto Refresh
 With Screenshot & Telegram Integration
 Auto-installs all dependencies
 """
@@ -74,7 +74,7 @@ URLS = [
     "https://ais-pre-xymzvoid6ag4yjrlxsjvue-628481697275.asia-east1.run.app"
 ]
 
-REFRESH_INTERVAL = 300  # 5 minutes in seconds
+REFRESH_INTERVAL = 1800  # 30 minutes in seconds (changed from 300)
 
 # ==================== TELEGRAM CONFIG ====================
 TELEGRAM_BOT_TOKEN = "8972471605:AAE7hhT8QO5N_hnfHTIX1PxRzmkRBm5voyY"
@@ -296,7 +296,7 @@ Windows are active and running"""
             log(f"Next refresh in {REFRESH_INTERVAL // 60} minutes...")
             log("=" * 60)
             
-            # Wait before next cycle
+            # Wait before next cycle (30 minutes)
             time.sleep(REFRESH_INTERVAL)
             
     except KeyboardInterrupt:
